@@ -1,0 +1,38 @@
+* spice file for my simple amplifier
+.include 32nm_HP.pm
+*
+*SSMO converged after 10 final performances are gain=4.866 range=1.510 center=0.025
+*	W0	  1.0000   0.3552  -64.48%
+*	W1	  1.0000   4.4374  343.74%
+*	W2	  1.0000   1.6813   68.13%
+*	W3	  1.0000   1.1157   11.57%
+*	W4	  1.0000   1.5751   57.51%
+*	W5	  1.0000   0.7465  -25.35%
+*	W6	  1.0000   0.5691  -43.09%
+*   W7    1.0000   0.4783  -52.17%
+*   W8    1.0000   1.1171   11.71%
+*
+
+* n-channel mosfet with gate shifter
+.subckt nfet D G S B PARAMS: delta=0.0 L=1.0 W=1.0
+vshift G GG {delta}
+m0 D GG S B NMOS L={L} W={W}
+.ends
+
+* p-channel mosfet with gate shifter
+.subckt pfet D G S B PARAMS: delta=0.0 L=1.0 W=1.0
+vshift G GG {delta}
+m0 D GG S B PMOS L={L} W={W}
+.ends
+
+.subckt opamp neg pos out vdd vss PARAMS: D0=0 D1=0 D2=0 D3=0 D4=0 D5=0 D6=0 D7=0 D8=0
+x0      vdd     a       a       vdd     pfet    PARAMS: L=32n    W=284n 	delta={D0} 
+x1      vdd     a       b       vdd     pfet    PARAMS: L=32n    W=284n 	delta={D1}
+x2      a       pos     c       vss     nfet    PARAMS: L=32n    W=2840n 	delta={D2}
+x3      b       neg     c       vss     nfet    PARAMS: L=32n    W=2840n 	delta={D3}
+x4      vdd     b       out     vdd     pfet    PARAMS: L=32n    W=1345n 	delta={D4}
+x5      out     d       vss     vss     nfet    PARAMS: L=32n    W=167n 	delta={D5}
+x6      vdd     a       d       vdd     pfet    PARAMS: L=32n    W=1260n 	delta={D6}
+x7      d       d       vss     vss     nfet    PARAMS: L=32n    W=478n 	delta={D7}
+x8      c       d       vss     vss     nfet    PARAMS: L=32n    W=285n 	delta={D8}
+.ends
